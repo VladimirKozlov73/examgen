@@ -1,9 +1,6 @@
 package pro.sky.course2.examinerservice.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pro.sky.course2.examinerservice.domain.Question;
 import pro.sky.course2.examinerservice.service.QuestionService;
 
@@ -24,12 +21,12 @@ public class JavaQuestionController {
         return questionService.getAll();
     }
 
-    @GetMapping("/add")
+    @PostMapping("/add")
     public void add(@RequestParam String question, @RequestParam String answer) {
         questionService.add(new Question(question, answer));
     }
 
-    @GetMapping("/remove")
+    @DeleteMapping("/remove")
     public void remove(@RequestParam String question, @RequestParam String answer) {
         questionService.remove(new Question(question, answer));
     }

@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -43,5 +44,33 @@ class ExaminerServiceImplTest {
 
         assertThrows(ResponseStatusException.class,
                 () -> examinerService.getQuestions(5));
+    }
+
+    @Test
+    void testGetQuestionsWithAmountZeroReturnsEmpty() {
+        Set<Question> questions = new HashSet<>();
+        questions.add(new Question("q1", "a1"));
+        when(questionService.getAll()).thenReturn(questions);
+
+        Set<Question> result = examinerService.getQuestions(0);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetQuestionsWithEmptyCollectionAndAmountZero() {
+        when(questionService.getAll()).thenReturn(Collections.emptySet());
+
+        Set<Question> result = examinerService.getQuestions(0);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetQuestionsWithEmptyCollectionAndAmountGreaterThanZeroThrows() {
+        when(questionService.getAll()).thenReturn(Collections.emptySet());
+
+        assertThrows(ResponseStatusException.class,
+                () -> examinerService.getQuestions(1));
     }
 }

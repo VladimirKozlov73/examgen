@@ -71,4 +71,9 @@ public class JavaQuestionService implements QuestionService {
         }
         return result;
     }
+
+    @Override
+    public void add(String questionText, String answerText) {
+        add(new Question(questionText, answerText));
+    }
 }
