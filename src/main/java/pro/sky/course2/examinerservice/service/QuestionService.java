@@ -10,4 +10,5 @@ public interface QuestionService {
     void remove(Question question);
     Set<Question> getAll();
     Question getRandomQuestion();
+    void add(String questionText, String answerText);
 }
