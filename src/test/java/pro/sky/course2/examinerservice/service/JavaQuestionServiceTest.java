@@ -3,6 +3,8 @@ package pro.sky.course2.examinerservice.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pro.sky.course2.examinerservice.domain.Question;
+import pro.sky.course2.examinerservice.repository.InMemoryQuestionRepository;
+import pro.sky.course2.examinerservice.repository.QuestionRepository;
 
 import java.util.Set;
 
@@ -14,7 +16,8 @@ class JavaQuestionServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new JavaQuestionService();
+        QuestionRepository repository = new InMemoryQuestionRepository();
+        service = new JavaQuestionService(repository);
     }
 
     @Test

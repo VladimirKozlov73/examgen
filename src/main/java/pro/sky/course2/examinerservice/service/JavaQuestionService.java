@@ -2,6 +2,7 @@ package pro.sky.course2.examinerservice.service;
 
 import org.springframework.stereotype.Service;
 import pro.sky.course2.examinerservice.domain.Question;
+import pro.sky.course2.examinerservice.repository.QuestionRepository;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -11,10 +12,11 @@ import java.util.Set;
 @Service
 public class JavaQuestionService implements QuestionService {
 
-    private final Set<Question> questions = new HashSet<>();
+    private final QuestionRepository repository;
     private final Random random = new Random();
 
-    public JavaQuestionService() {
+    public JavaQuestionService(QuestionRepository repository) {
+        this.repository = repository;
         initQuestions();
     }
 
@@ -33,27 +35,33 @@ public class JavaQuestionService implements QuestionService {
     }
 
     @Override
+    public void add(String questionText, String answerText) {
+        add(new Question(questionText, answerText));
+    }
+
+    @Override
     public void add(Question question) {
-        questions.add(question);
+        repository.add(question);
     }
 
     @Override
     public void remove(Question question) {
-        questions.remove(question);
+        repository.remove(question);
     }
 
     @Override
     public Set<Question> getAll() {
-        return Collections.unmodifiableSet(questions);
+        return repository.getAll();
     }
 
     @Override
     public Question getRandomQuestion() {
-        if (questions.isEmpty()) {
+        Set<Question> all = repository.getAll();
+        if (all.isEmpty()) {
             throw new RuntimeException("Нет вопросов для выбора");
         }
-        int index = random.nextInt(questions.size());
-        return new java.util.ArrayList<>(questions).get(index);
+        int index = random.nextInt(all.size());
+        return new java.util.ArrayList<>(all).get(index);
     }
 
     @Override
@@ -63,17 +71,12 @@ public class JavaQuestionService implements QuestionService {
         }
         String lowerKeyword = keyword.toLowerCase();
         Set<Question> result = new HashSet<>();
-        for (Question question : questions) {
+        for (Question question : getAll()) {
             if (question.getQuestion().toLowerCase().contains(lowerKeyword) ||
                     question.getAnswer().toLowerCase().contains(lowerKeyword)) {
                 result.add(question);
             }
         }
         return result;
-    }
-
-    @Override
-    public void add(String questionText, String answerText) {
-        add(new Question(questionText, answerText));
     }
 }

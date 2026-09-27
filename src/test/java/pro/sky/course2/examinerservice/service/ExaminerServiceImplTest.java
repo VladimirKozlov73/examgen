@@ -15,22 +15,29 @@ import static org.mockito.Mockito.*;
 
 class ExaminerServiceImplTest {
 
-    private QuestionService questionService;
+    private JavaQuestionService javaQuestionService;
+    private MathQuestionService mathQuestionService;
     private ExaminerServiceImpl examinerService;
 
     @BeforeEach
     void setUp() {
-        questionService = Mockito.mock(QuestionService.class);
-        examinerService = new ExaminerServiceImpl(questionService);
+        javaQuestionService = Mockito.mock(JavaQuestionService.class);
+        mathQuestionService = Mockito.mock(MathQuestionService.class);
+        examinerService = new ExaminerServiceImpl(javaQuestionService, mathQuestionService);
     }
 
     @Test
     void testGetQuestionsSuccess() {
-        Set<Question> questions = new HashSet<>();
-        questions.add(new Question("q1", "a1"));
-        questions.add(new Question("q2", "a2"));
-        when(questionService.getAll()).thenReturn(questions);
-        when(questionService.getRandomQuestion()).thenReturn(new Question("q1", "a1"));
+        Set<Question> javaQuestions = new HashSet<>();
+        javaQuestions.add(new Question("q1", "a1"));
+        javaQuestions.add(new Question("q2", "a2"));
+
+        Set<Question> mathQuestions = new HashSet<>();
+        mathQuestions.add(new Question("m1", "ma1"));
+
+        when(javaQuestionService.getAll()).thenReturn(javaQuestions);
+        when(mathQuestionService.getAll()).thenReturn(mathQuestions);
+        when(javaQuestionService.getRandomQuestion()).thenReturn(new Question("q1", "a1"));
 
         Set<Question> result = examinerService.getQuestions(1);
         assertEquals(1, result.size());
@@ -38,9 +45,13 @@ class ExaminerServiceImplTest {
 
     @Test
     void testGetQuestionsThrows() {
-        Set<Question> questions = new HashSet<>();
-        questions.add(new Question("q1", "a1"));
-        when(questionService.getAll()).thenReturn(questions);
+        Set<Question> javaQuestions = new HashSet<>();
+        javaQuestions.add(new Question("q1", "a1"));
+
+        Set<Question> mathQuestions = Collections.emptySet();
+
+        when(javaQuestionService.getAll()).thenReturn(javaQuestions);
+        when(mathQuestionService.getAll()).thenReturn(mathQuestions);
 
         assertThrows(ResponseStatusException.class,
                 () -> examinerService.getQuestions(5));
@@ -48,9 +59,14 @@ class ExaminerServiceImplTest {
 
     @Test
     void testGetQuestionsWithAmountZeroReturnsEmpty() {
-        Set<Question> questions = new HashSet<>();
-        questions.add(new Question("q1", "a1"));
-        when(questionService.getAll()).thenReturn(questions);
+        Set<Question> javaQuestions = new HashSet<>();
+        javaQuestions.add(new Question("q1", "a1"));
+
+        Set<Question> mathQuestions = new HashSet<>();
+        mathQuestions.add(new Question("m1", "ma1"));
+
+        when(javaQuestionService.getAll()).thenReturn(javaQuestions);
+        when(mathQuestionService.getAll()).thenReturn(mathQuestions);
 
         Set<Question> result = examinerService.getQuestions(0);
 
@@ -59,7 +75,8 @@ class ExaminerServiceImplTest {
 
     @Test
     void testGetQuestionsWithEmptyCollectionAndAmountZero() {
-        when(questionService.getAll()).thenReturn(Collections.emptySet());
+        when(javaQuestionService.getAll()).thenReturn(Collections.emptySet());
+        when(mathQuestionService.getAll()).thenReturn(Collections.emptySet());
 
         Set<Question> result = examinerService.getQuestions(0);
 
@@ -68,7 +85,8 @@ class ExaminerServiceImplTest {
 
     @Test
     void testGetQuestionsWithEmptyCollectionAndAmountGreaterThanZeroThrows() {
-        when(questionService.getAll()).thenReturn(Collections.emptySet());
+        when(javaQuestionService.getAll()).thenReturn(Collections.emptySet());
+        when(mathQuestionService.getAll()).thenReturn(Collections.emptySet());
 
         assertThrows(ResponseStatusException.class,
                 () -> examinerService.getQuestions(1));

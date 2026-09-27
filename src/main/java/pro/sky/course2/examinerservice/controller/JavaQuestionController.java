@@ -1,8 +1,14 @@
 package pro.sky.course2.examinerservice.controller;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import pro.sky.course2.examinerservice.domain.Question;
-import pro.sky.course2.examinerservice.service.QuestionService;
+import pro.sky.course2.examinerservice.service.JavaQuestionService;
 
 import java.util.Set;
 
@@ -10,29 +16,29 @@ import java.util.Set;
 @RequestMapping("/exam/java")
 public class JavaQuestionController {
 
-    private final QuestionService questionService;
+    private final JavaQuestionService javaQuestionService;
 
-    public JavaQuestionController(QuestionService questionService) {
-        this.questionService = questionService;
+    public JavaQuestionController(@Qualifier("javaQuestionService") JavaQuestionService javaQuestionService) {
+        this.javaQuestionService = javaQuestionService;
     }
 
     @GetMapping
     public Set<Question> getAll() {
-        return questionService.getAll();
+        return javaQuestionService.getAll();
     }
 
     @PostMapping("/add")
     public void add(@RequestParam String question, @RequestParam String answer) {
-        questionService.add(new Question(question, answer));
+        javaQuestionService.add(question, answer);
     }
 
     @DeleteMapping("/remove")
     public void remove(@RequestParam String question, @RequestParam String answer) {
-        questionService.remove(new Question(question, answer));
+        javaQuestionService.remove(new Question(question, answer));
     }
 
     @GetMapping("/find")
     public Set<Question> find(@RequestParam String keyword) {
-        return questionService.findByKeyword(keyword);
+        return javaQuestionService.findByKeyword(keyword);
     }
 }
